@@ -1,4 +1,4 @@
-package ru.samyual;
+package ru.samyual.counters;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -10,12 +10,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Класс HsqlWordCounter
+ * <p>
+ * Реализует счётчик слов с хранением статистики в базе данных HyperSQL
+ */
 public final class HsqlWordCounter implements WordCounter {
 
     private static final String JDBC_DRIVER_CLASS = "org.hsqldb.jdbc.JDBCDriver";
-    private static final String CONNECTION_TMPL = "jdbc:hsqldb:file:db/wordcount;shutdown=true;hsqldb.sqllog=1";
+    private static final String CONNECTION_URI = "jdbc:hsqldb:file:db/wordcount;shutdown=true;hsqldb.sqllog=1";
     private static final String USER = "SA";
     private static final String PASSWORD = "";
     private static final String SQL_DROP_TABLE = "DROP TABLE wc IF EXISTS;";
@@ -25,85 +32,56 @@ public final class HsqlWordCounter implements WordCounter {
     private static final String SQL_UPDATE = "UPDATE wc SET (count) = ? WHERE word = ?";
     private static final String SQL_SELECT = "SELECT word, count FROM wc ORDER BY word";
 
+    private static final Logger log = LoggerFactory.getLogger(HsqlWordCounter.class);
+
     private Connection connection = null;
 
-    public HsqlWordCounter(final String pathToDb) {
-        final String connectionString = String.format(CONNECTION_TMPL, pathToDb);
-
-        Logger logger = Logger.getLogger("hsqldb.db");
+    /**
+     * Класс HsqlWordCounter
+     * <p>
+     * Реализует счётчик слов с хранением статистики в БД HyperSQL
+     */
+    public HsqlWordCounter() {
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("hsqldb.db");
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.WARNING);
         try {
             logger.addHandler(new FileHandler("db/wordcount.log"));
         } catch (SecurityException | IOException e) {
-            e.printStackTrace();
+            log.error("Add handler to logger", e);
             System.exit(1);
         }
 
         try {
             Class.forName(JDBC_DRIVER_CLASS);
         } catch (final ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error(String.format("Jdbc driver %s not found", JDBC_DRIVER_CLASS), e);
             System.exit(1);
         }
 
         try {
-            connection = DriverManager.getConnection(connectionString, USER, PASSWORD);
+            connection = DriverManager.getConnection(CONNECTION_URI, USER, PASSWORD);
             Statement statement = connection.createStatement();
             statement.execute(SQL_DROP_TABLE);
             statement.execute(SQL_CREATE_TABLE);
         } catch (final SQLException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        Logger.getLogger("org.hsqldb.persist").setLevel(Level.WARNING);
-    }
-
-    @Override
-    public void count(final String[] words) {
-        for (final String word : words) {
-            count(word);
-        }
-    }
-
-    @Override
-    public void count(final String word) {
-        if (!word.isEmpty()) {
-            final long count = get(word);
-            if (count == 0) {
-                insert(word);
-            } else {
-                update(word, count + 1);
-            }
-        }
-    }
-
-    private void insert(final String word) {
-        try {
-            final PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
-            statement.setString(1, word);
-            statement.execute();
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    private void update(final String word, final long count) {
-        try {
-            final PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
-            statement.setLong(1, count);
-            statement.setString(2, word);
-            statement.execute();
-        } catch (final SQLException e) {
-            e.printStackTrace();
+            log.error("Table creation error", e);
             System.exit(1);
         }
     }
 
     @Override
-    public long get(final String word) {
+    public void accumulate(final String word) {
+        final long count = getCounter(word);
+        if (count == 0) {
+            insert(word);
+        } else {
+            update(word, count + 1);
+        }
+    }
+
+    @Override
+    public long getCounter(final String word) {
         try {
             final PreparedStatement statement = connection.prepareStatement(SQL_GET);
             statement.setString(1, word);
@@ -113,7 +91,7 @@ public final class HsqlWordCounter implements WordCounter {
                 return count;
             }
         } catch (final SQLException e) {
-            e.printStackTrace();
+            log.error(String.format("Cannot get word %s", word), e);
             System.exit(1);
         }
         return 0;
@@ -135,7 +113,30 @@ public final class HsqlWordCounter implements WordCounter {
                 out.println(word + " - " + count);
             }
         } catch (final SQLException e) {
-            e.printStackTrace();
+            log.error("Reporting error", e);
+            System.exit(1);
+        }
+    }
+
+    private void insert(final String word) {
+        try {
+            final PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
+            statement.setString(1, word);
+            statement.execute();
+        } catch (final SQLException e) {
+            log.error(String.format("Cannot insert word %s", word), e);
+            System.exit(1);
+        }
+    }
+
+    private void update(final String word, final long count) {
+        try {
+            final PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
+            statement.setLong(1, count);
+            statement.setString(2, word);
+            statement.execute();
+        } catch (final SQLException e) {
+            log.error(String.format("Cannot update word %s", word), e);
             System.exit(1);
         }
     }

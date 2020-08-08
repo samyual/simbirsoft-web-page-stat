@@ -1,2 +1,3 @@
 ru/samyual/AppTest.class
-ru/samyual/PageUtilsTest.class
+ru/samyual/HsqlWordCounterTest.class
+ru/samyual/MemoryWordCounterTest.class

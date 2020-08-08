@@ -1,5 +1,6 @@
-ru/samyual/PageUtils.class
-ru/samyual/WordCounter.class
-ru/samyual/App.class
-ru/samyual/HsqlWordCounter.class
-ru/samyual/MemoryWordCounter.class
+ru/samyual/parsers/JsoupParser.class
+ru/samyual/counters/MemoryWordCounter.class
+ru/samyual/counters/WordCounter.class
+ru/samyual/parsers/Parser.class
+ru/samyual/counters/HsqlWordCounter.class
+ru/samyual/Main.class

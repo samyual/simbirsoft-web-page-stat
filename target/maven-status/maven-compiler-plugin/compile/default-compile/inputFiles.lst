@@ -1,5 +1,6 @@
-/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/WordCounter.java
-/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/PageUtils.java
-/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/App.java
-/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/MemoryWordCounter.java
-/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/HsqlWordCounter.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/parsers/Parser.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/counters/WordCounter.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/parsers/JsoupParser.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/counters/HsqlWordCounter.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/counters/MemoryWordCounter.java
+/run/media/samyual/Windows/projects/java/web-page-stat/src/main/java/ru/samyual/Main.java

@@ -1,25 +1,21 @@
-package ru.samyual;
+package ru.samyual.counters;
 
 import java.io.PrintStream;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * Класс MemoryWordCounter
+ * <p>
+ * Реализует счётчик слов с хранением статистики в оперативной памяти.
+ */
 public class MemoryWordCounter implements WordCounter {
 
     private final SortedMap<String, Long> counter = new TreeMap<>();
 
     @Override
-    public void count(final String[] words) {
-        for (final String word : words) {
-            count(word);
-        }
-    }
-
-    @Override
-    public void count(final String word) {
-        if (!word.isEmpty()) {
-            counter.put(word, get(word) + 1);
-        }
+    public void accumulate(final String word) {
+        counter.put(word, getCounter(word) + 1);
     }
 
     @Override
@@ -33,7 +29,7 @@ public class MemoryWordCounter implements WordCounter {
     }
 
     @Override
-    public long get(final String word) {
+    public long getCounter(final String word) {
         return counter.getOrDefault(word.toUpperCase(), 0L);
     }
 }
