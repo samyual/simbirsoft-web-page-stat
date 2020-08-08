@@ -45,12 +45,6 @@ public final class HsqlWordCounter implements WordCounter {
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger("hsqldb.db");
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.WARNING);
-        try {
-            logger.addHandler(new FileHandler("db/wordcount.log"));
-        } catch (SecurityException | IOException e) {
-            log.error("Add handler to logger", e);
-            System.exit(1);
-        }
 
         try {
             Class.forName(JDBC_DRIVER_CLASS);
