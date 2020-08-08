@@ -6,6 +6,8 @@ public interface WordCounter {
 
     void count(String[] words);
 
+    void count(String word);
+
     long get(String word);
 
     void report();

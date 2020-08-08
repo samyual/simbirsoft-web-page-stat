@@ -10,7 +10,7 @@ public class App {
     {
         if (args.length >= 1) {
             final String url = args[0];
-            Path path = Paths.get("count");
+            Path path = Paths.get("page.html");
             PageUtils.save(new URL(url), path);
             PageUtils.parse(path);
         }

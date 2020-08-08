@@ -11,9 +11,14 @@ public class MemoryWordCounter implements WordCounter {
     @Override
     public void count(final String[] words) {
         for (final String word : words) {
-            if (!word.isEmpty()) {
-                counter.put(word.toUpperCase(), get(word) + 1L);
-            }
+            count(word);
+        }
+    }
+
+    @Override
+    public void count(final String word) {
+        if (!word.isEmpty()) {
+            counter.put(word, get(word) + 1);
         }
     }
 
@@ -31,5 +36,4 @@ public class MemoryWordCounter implements WordCounter {
     public long get(final String word) {
         return counter.getOrDefault(word.toUpperCase(), 0L);
     }
-    
 }

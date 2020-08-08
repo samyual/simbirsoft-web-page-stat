@@ -1,4 +1,5 @@
 ru/samyual/PageUtils.class
 ru/samyual/WordCounter.class
 ru/samyual/App.class
+ru/samyual/HsqlWordCounter.class
 ru/samyual/MemoryWordCounter.class

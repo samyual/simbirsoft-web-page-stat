@@ -37,6 +37,7 @@ public final class PageUtils {
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.write(line);
+                writer.write('\n');
             }
 
         } catch (final IOException e) {
@@ -45,11 +46,11 @@ public final class PageUtils {
     }
 
     public static void parse(final Path pathToParse) throws IOException {
-        final WordCounter counter = new MemoryWordCounter();
+        final WordCounter counter = new HsqlWordCounter("wordcounter");
         final Document document = Jsoup.parse(pathToParse.toFile(), "UTF-8");
         Elements elements = document.body().getAllElements();
         for (Element element : elements) {
-            String text = element.text();
+            String text = element.text().toUpperCase();
             String[] words = text.split(DELIMITERS);
             counter.count(words);
         }
